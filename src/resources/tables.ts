@@ -68,7 +68,10 @@ tablesResource
         title: opts.title,
         table_name: opts.tableName ?? opts.title,
       };
-      if (opts.columns) body.columns = JSON.parse(opts.columns);
+      // NocoDB requires a non-empty `columns` array; default to a single primary text column.
+      body.columns = opts.columns
+        ? JSON.parse(opts.columns)
+        : [{ title: "Title", uidt: "SingleLineText", pv: true }];
       const data = await client.post(`/api/v2/meta/bases/${opts.base}/tables`, body);
       output(data, { json: opts.json });
     } catch (err) {
